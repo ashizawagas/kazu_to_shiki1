@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>かずとしき1</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #fce7f3, #e0e7ff, #dbeafe);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #7c3aed;
+            margin-bottom: 15px;
+        }
+
+        .problem-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #9333ea;
+        }
+
+        .problem-area {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .message-area {
+            min-height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .blocks-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 20px;
+            background: #f0fdf4;
+            border: 2px solid #bbf7d0;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .blocks-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .ten-block {
+            display: flex;
+            gap: 4px;
+            border: 2px solid #3b82f6;
+            background: #dbeafe;
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 8px;
+        }
+
+        .ten-unit {
+            width: 24px;
+            height: 24px;
+            background: #60a5fa;
+            border: 1px solid #2563eb;
+            border-radius: 3px;
+        }
+
+        .one-block {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            margin-bottom: 8px;
+        }
+
+        .one-unit {
+            width: 24px;
+            height: 24px;
+            background: #fbbf24;
+            border: 2px solid #d97706;
+            border-radius: 3px;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #374151;
+            margin-top: 30px;
+        }
+
+        .formula-text {
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-top: 20px;
+        }
+
+        .input-box {
+            width: 60px;
+            height: 48px;
+            text-align: center;
+            border: 3px solid #c084fc;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            margin: 0 8px;
+        }
+
+        .formula-input {
+            width: 48px;
+            height: 32px;
+            text-align: center;
+            border: 2px solid #fde047;
+            border-radius: 4px;
+            font-size: 1rem;
+            margin: 0 8px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-check {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-check:hover {
+            background: #059669;
+        }
+
+        .btn-new {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-new:hover {
+            background: #2563eb;
+        }
+
+        .message {
+            display: inline-block;
+        }
+
+        .success-message {
+            background: #fbbf24;
+            color: #7c3aed;
+            font-size: 2rem;
+            font-weight: bold;
+            padding: 20px 30px;
+            border-radius: 25px;
+            animation: bounce 1s infinite;
+        }
+
+        .error-message {
+            background: #ef4444;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 15px 25px;
+            border-radius: 25px;
+            animation: pulse 1s infinite;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            animation: ping 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
+            40%, 43% { transform: translate3d(0,-30px,0); }
+            70% { transform: translate3d(0,-15px,0); }
+            90% { transform: translate3d(0,-4px,0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes ping {
+            75%, 100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">かずとしき1</h1>
+            <div class="problem-number" id="problemNumber">もんだい 1</div>
+        </div>
+
+        <div class="problem-area">
+            <div class="message-area" id="messageArea"></div>
+            <div class="blocks-container" id="blocksContainer"></div>
+            <div id="questionArea"></div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-check" onclick="checkAnswer()">✓ こたえを かくにん</button>
+            <button class="btn btn-new" onclick="generateNewProblem()">🔄 あたらしい もんだい</button>
+        </div>
+    </div>
+
+    <script>
+        // アプリの状態
+        let currentProblem = 1;
+        let targetNumber = Math.floor(Math.random() * 9) + 11;
+        let answers = {
+            box: '',
+            circle: '',
+            formula1: '',
+            formula2: '',
+            formula3: ''
+        };
+
+        // ブロック生成関数
+        function createBlocks(number) {
+            const tens = Math.floor(number / 10);
+            const ones = number % 10;
+            let html = '<div class="blocks-group">';
+            
+            // 10のかたまり
+            for (let i = 0; i < tens; i++) {
+                html += '<div class="ten-block">';
+                for (let j = 0; j < 10; j++) {
+                    html += '<div class="ten-unit"></div>';
+                }
+                html += '</div>';
+            }
+            
+            // 1のかたまり
+            if (ones > 0) {
+                html += '<div class="one-block">';
+                for (let i = 0; i < ones; i++) {
+                    html += '<div class="one-unit"></div>';
+                }
+                html += '</div>';
+            }
+            
+            html += '</div>';
+            return html;
+        }
+
+        // 問題表示関数
+        function displayProblem() {
+            const blocksContainer = document.getElementById('blocksContainer');
+            const questionArea = document.getElementById('questionArea');
+            const problemNumber = document.getElementById('problemNumber');
+            
+            problemNumber.textContent = `もんだい ${currentProblem}`;
+            blocksContainer.innerHTML = createBlocks(targetNumber);
+            
+            let questionHTML = '';
+            
+            if (currentProblem === 1) {
+                questionHTML = `
+                    <div class="question-text">
+                        <input type="text" class="input-box" id="box" placeholder="？" oninput="updateAnswer('box', this.value)">
+                        は １０ と
+                        <input type="text" class="input-box" id="circle" placeholder="？" oninput="updateAnswer('circle', this.value)">
+                        を あわせた かず です。
+                    </div>
+                `;
+            } else if (currentProblem === 2) {
+                questionHTML = `
+                    <div class="question-text">
+                        １０ と
+                        <input type="text" class="input-box" id="circle" placeholder="？" oninput="updateAnswer('circle', this.value)">
+                        を あわせた かずは
+                        <input type="text" class="input-box" id="box" placeholder="？" oninput="updateAnswer('box', this.value)">
+                        です。
+                    </div>
+                    <div class="formula-text">
+                        しき： １０ ＋
+                        <input type="text" class="formula-input" id="formula2" placeholder="？" oninput="updateAnswer('formula2', this.value)">
+                        ＝
+                        <input type="text" class="formula-input" id="formula3" placeholder="？" oninput="updateAnswer('formula3', this.value)">
+                    </div>
+                `;
+            } else {
+                questionHTML = `
+                    <div class="question-text">
+                        <input type="text" class="input-box" id="box" placeholder="？" oninput="updateAnswer('box', this.value)">
+                        から
+                        <input type="text" class="input-box" id="circle" placeholder="？" oninput="updateAnswer('circle', this.value)">
+                        を とった かずは １０ です。
+                    </div>
+                    <div class="formula-text">
+                        しき：
+                        <input type="text" class="formula-input" id="formula1" placeholder="？" oninput="updateAnswer('formula1', this.value)">
+                        －
+                        <input type="text" class="formula-input" id="formula2" placeholder="？" oninput="updateAnswer('formula2', this.value)">
+                        ＝ １０
+                    </div>
+                `;
+            }
+            
+            questionArea.innerHTML = questionHTML;
+        }
+
+        // 答え更新関数
+        function updateAnswer(field, value) {
+            answers[field] = value;
+        }
+
+        // 全角数字を半角に変換
+        function normalizeNumber(str) {
+            if (!str) return '';
+            return str.replace(/[０-９]/g, (char) => {
+                return String.fromCharCode(char.charCodeAt(0) - 0xFF10 + 0x30);
+            });
+        }
+
+        // 答え確認関数
+        function checkAnswer() {
+            const normalizedBox = normalizeNumber(answers.box);
+            const normalizedCircle = normalizeNumber(answers.circle);
+            const normalizedFormula1 = normalizeNumber(answers.formula1);
+            const normalizedFormula2 = normalizeNumber(answers.formula2);
+            const normalizedFormula3 = normalizeNumber(answers.formula3);
+            
+            let correct = false;
+            
+            if (currentProblem === 1) {
+                correct = parseInt(normalizedBox) === targetNumber && parseInt(normalizedCircle) === (targetNumber - 10);
+            } else if (currentProblem === 2) {
+                correct = parseInt(normalizedCircle) === (targetNumber - 10) && 
+                         parseInt(normalizedBox) === targetNumber &&
+                         parseInt(normalizedFormula2) === (targetNumber - 10) &&
+                         parseInt(normalizedFormula3) === targetNumber;
+            } else {
+                correct = parseInt(normalizedBox) === targetNumber && 
+                         parseInt(normalizedCircle) === (targetNumber - 10) &&
+                         parseInt(normalizedFormula1) === targetNumber &&
+                         parseInt(normalizedFormula2) === (targetNumber - 10);
+            }
+            
+            if (correct) {
+                showSuccessMessage();
+                setTimeout(() => {
+                    hideMessage();
+                    if (currentProblem < 3) {
+                        currentProblem++;
+                    } else {
+                        currentProblem = 1;
+                    }
+                    resetAnswers();
+                    displayProblem();
+                }, 2000);
+            } else {
+                showErrorMessage();
+                setTimeout(() => {
+                    hideMessage();
+                    resetAnswers();
+                    displayProblem();
+                }, 2000);
+            }
+        }
+
+        // 成功メッセージ表示
+        function showSuccessMessage() {
+            const messageArea = document.getElementById('messageArea');
+            messageArea.innerHTML = '<div class="message success-message">🎉 せいかい！ 🎉</div>';
+            
+            // 紙吹雪効果
+            for (let i = 0; i < 20; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.position = 'fixed';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = Math.random() * 100 + 'vh';
+                confetti.style.backgroundColor = ['#ef4444', '#3b82f6', '#10b981', '#fbbf24', '#ec4899'][i % 5];
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.zIndex = '1000';
+                confetti.style.pointerEvents = 'none';
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 2000);
+            }
+        }
+
+        // エラーメッセージ表示
+        function showErrorMessage() {
+            const messageArea = document.getElementById('messageArea');
+            messageArea.innerHTML = '<div class="message error-message">😔 もういちど、かんがえましょう 😔</div>';
+        }
+
+        // メッセージ非表示
+        function hideMessage() {
+            const messageArea = document.getElementById('messageArea');
+            messageArea.innerHTML = '';
+        }
+
+        // 答えリセット
+        function resetAnswers() {
+            answers = {
+                box: '',
+                circle: '',
+                formula1: '',
+                formula2: '',
+                formula3: ''
+            };
+        }
+
+        // 新しい問題生成
+        function generateNewProblem() {
+            targetNumber = Math.floor(Math.random() * 9) + 11;
+            resetAnswers();
+            hideMessage();
+            displayProblem();
+        }
+
+        // 初期化
+        window.onload = function() {
+            displayProblem();
+        };
+    </script>
+</body>
+</html>
