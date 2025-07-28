@@ -41,6 +41,13 @@
             color: #9333ea;
         }
 
+        .game-progress {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #059669;
+            margin-top: 10px;
+        }
+
         .problem-area {
             background: white;
             padding: 40px;
@@ -190,6 +197,17 @@
             animation: bounce 1s infinite;
         }
 
+        .clear-message {
+            background: #10b981;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            padding: 30px 40px;
+            border-radius: 25px;
+            animation: bounce 1s infinite;
+            border: 5px solid #fbbf24;
+        }
+
         .error-message {
             background: #ef4444;
             color: white;
@@ -233,6 +251,7 @@
         <div class="header">
             <h1 class="title">かずとしき1</h1>
             <div class="problem-number" id="problemNumber">もんだい 1</div>
+            <div class="game-progress" id="gameProgress">ゲームしんこう: 1もんめ / 3もん</div>
         </div>
 
         <div class="problem-area">
@@ -249,7 +268,8 @@
 
     <script>
         // アプリの状態
-        let currentProblem = 1;
+        let currentSubProblem = 1; // 現在のサブ問題（1-3）
+        let currentGameNumber = 1; // 現在のゲーム番号（1-3）
         let targetNumber = Math.floor(Math.random() * 9) + 11;
         let answers = {
             box: '',
@@ -292,13 +312,15 @@
             const blocksContainer = document.getElementById('blocksContainer');
             const questionArea = document.getElementById('questionArea');
             const problemNumber = document.getElementById('problemNumber');
+            const gameProgress = document.getElementById('gameProgress');
             
-            problemNumber.textContent = `もんだい ${currentProblem}`;
+            problemNumber.textContent = `もんだい ${currentSubProblem}`;
+            gameProgress.textContent = `ゲームしんこう: ${currentGameNumber}もんめ / 3もん`;
             blocksContainer.innerHTML = createBlocks(targetNumber);
             
             let questionHTML = '';
             
-            if (currentProblem === 1) {
+            if (currentSubProblem === 1) {
                 questionHTML = `
                     <div class="question-text">
                         <input type="text" class="input-box" id="box" placeholder="？" oninput="updateAnswer('box', this.value)">
@@ -307,7 +329,7 @@
                         を あわせた かず です。
                     </div>
                 `;
-            } else if (currentProblem === 2) {
+            } else if (currentSubProblem === 2) {
                 questionHTML = `
                     <div class="question-text">
                         １０ と
@@ -367,9 +389,9 @@
             
             let correct = false;
             
-            if (currentProblem === 1) {
+            if (currentSubProblem === 1) {
                 correct = parseInt(normalizedBox) === targetNumber && parseInt(normalizedCircle) === (targetNumber - 10);
-            } else if (currentProblem === 2) {
+            } else if (currentSubProblem === 2) {
                 correct = parseInt(normalizedCircle) === (targetNumber - 10) && 
                          parseInt(normalizedBox) === targetNumber &&
                          parseInt(normalizedFormula2) === (targetNumber - 10) &&
@@ -385,11 +407,24 @@
                 showSuccessMessage();
                 setTimeout(() => {
                     hideMessage();
-                    if (currentProblem < 3) {
-                        currentProblem++;
+                    
+                    if (currentSubProblem < 3) {
+                        // 次のサブ問題へ
+                        currentSubProblem++;
                     } else {
-                        currentProblem = 1;
+                        // 1セット完了
+                        if (currentGameNumber < 3) {
+                            // 次のゲームセットへ
+                            currentGameNumber++;
+                            currentSubProblem = 1;
+                            targetNumber = Math.floor(Math.random() * 9) + 11;
+                        } else {
+                            // ゲームクリア
+                            showGameClearMessage();
+                            return;
+                        }
                     }
+                    
                     resetAnswers();
                     displayProblem();
                 }, 2000);
@@ -427,6 +462,38 @@
             }
         }
 
+        // ゲームクリアメッセージ表示
+        function showGameClearMessage() {
+            const messageArea = document.getElementById('messageArea');
+            messageArea.innerHTML = '<div class="message clear-message">🏆 ゲーム クリア！ おめでとう！ 🏆</div>';
+            
+            // 大きな紙吹雪効果
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.position = 'fixed';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = Math.random() * 100 + 'vh';
+                confetti.style.backgroundColor = ['#ef4444', '#3b82f6', '#10b981', '#fbbf24', '#ec4899'][i % 5];
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                confetti.style.zIndex = '1000';
+                confetti.style.pointerEvents = 'none';
+                confetti.style.width = '20px';
+                confetti.style.height = '20px';
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 3000);
+            }
+            
+            // ボタンを「最初からやりなおす」に変更
+            setTimeout(() => {
+                const buttons = document.querySelector('.buttons');
+                buttons.innerHTML = '<button class="btn btn-new" onclick="restartGame()">🔄 さいしょから やりなおす</button>';
+            }, 3000);
+        }
+
         // エラーメッセージ表示
         function showErrorMessage() {
             const messageArea = document.getElementById('messageArea');
@@ -455,6 +522,24 @@
             targetNumber = Math.floor(Math.random() * 9) + 11;
             resetAnswers();
             hideMessage();
+            displayProblem();
+        }
+
+        // ゲーム再開
+        function restartGame() {
+            currentSubProblem = 1;
+            currentGameNumber = 1;
+            targetNumber = Math.floor(Math.random() * 9) + 11;
+            resetAnswers();
+            hideMessage();
+            
+            // ボタンを元に戻す
+            const buttons = document.querySelector('.buttons');
+            buttons.innerHTML = `
+                <button class="btn btn-check" onclick="checkAnswer()">✓ こたえを かくにん</button>
+                <button class="btn btn-new" onclick="generateNewProblem()">🔄 あたらしい もんだい</button>
+            `;
+            
             displayProblem();
         }
 
